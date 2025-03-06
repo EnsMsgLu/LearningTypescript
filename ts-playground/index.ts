@@ -252,3 +252,305 @@ class Token {
 const UserToken = new Token("Access", "Refresh");
 console.log(UserToken);
 console.log(UserToken.AccessToken);
+
+//Access Modifiers  // ----------------------------------------------------------------------------- //
+//Public
+//Private
+//Protected
+class Persons {
+  public name: string;
+  private age: number;
+  protected email: string;
+  constructor(name: string, age: number, email: string) {
+    this.name = name;
+    this.age = age;
+    this.email = email;
+  }
+
+  getAge(): number {
+    return this.age;
+  }
+}
+const ModifyUser = new Persons("Yone", 20, "Email");
+console.log(ModifyUser.name);
+// console.log(ModifyUser.age); //Property 'age' is private and only accessible within class 'Persons'
+console.log(ModifyUser.getAge());
+// console.log(ModifyUser.email); //Property 'email' is protected and only accessible within class 'Persons' and its subclasses.
+class ModifyUsers extends Persons {
+  constructor(name: string, age: number, email: string) {
+    super(name, age, email);
+  }
+}
+const ModifyUser2 = new ModifyUsers("Darius", 25, "email");
+console.log(ModifyUser2);
+
+//Getters & Setters // ----------------------------------------------------------------------------- //
+
+class GSClass {
+  private _GSProperty: number = 0;
+
+  get GSProperty(): number {
+    return this._GSProperty;
+  }
+
+  set GSProperty(value: number) {
+    if (value < 0) {
+      console.log("Value cannot be negative");
+    } else {
+      this._GSProperty = value;
+    }
+  }
+}
+
+const GSInstance = new GSClass();
+
+console.log(`Current Value: ${GSInstance.GSProperty}`); // Current Value: 0
+GSInstance.GSProperty = 10;
+console.log(`Now Current Value ${GSInstance.GSProperty}`); // Current Value: 10
+GSInstance.GSProperty = -1;
+
+console.log(GSInstance.GSProperty); // Value cannot be negative and we will see 10 because current value 10
+// I used console.log but uses throw new Error this console.log doesnt working and throw it error code
+
+//Interface // ----------------------------------------------------------------------------- //
+
+interface Server {
+  name: string;
+  ip: string;
+  port: number;
+}
+
+const ServerExample: Server = {
+  name: "Server-01",
+  ip: "192.168.1.100",
+  port: 8080,
+};
+
+console.log(ServerExample.name);
+console.log(ServerExample.ip + `:` + ServerExample.port);
+
+//
+interface MathOperation {
+  (a: number, b: number): number;
+}
+const add: MathOperation = (a, b) => a + b;
+console.log(add(4, 5));
+const subtract: MathOperation = (a, b) => a - b;
+console.log(subtract(3, 2));
+
+//
+interface ServerInfo {
+  name: string;
+  ip: string;
+  port: number;
+  getInfo(ip: string, port: number): void;
+}
+
+function ExampleInfo(server: ServerInfo) {
+  console.log(`${server.name} Ssh connected: ${server.ip}:${server.port}`);
+  server.getInfo(server.ip, server.port);
+}
+
+const SVinfo: ServerInfo = {
+  name: "Server-01",
+  ip: "192.168.1.100",
+  port: 22,
+
+  // Two method here usual like function getInfo() or getInfo: () =>
+
+  // getInfo(ip: string, port: number) {
+  //   console.log(`Connection Function here: ${ip}:${port}`);
+  // },
+  getInfo: (ip: string, port: number) => {
+    console.log(`Connection Function here: ${ip}:${port}`);
+  },
+};
+ExampleInfo(SVinfo);
+
+//
+interface ServerDetails {
+  readonly ip: string;
+  readonly port: number;
+  details: string;
+}
+
+interface ExtendServerDetails extends ServerDetails {
+  id: number;
+}
+
+const Server02: ExtendServerDetails = {
+  id: 1,
+  ip: "192.168.1.99",
+  port: 22,
+  details: "Server Details ....",
+};
+
+// Server02.ip = '192.168.1.98' // Cannot assign to 'ip' because it is a read-only property ...
+// Server02.port = 2222 // Cannot assign to 'port' because it is a read-only property ...
+Server02.details = "Somethings details about Server";
+
+console.log(Server02);
+
+//
+interface SshConnect {
+  start(): void;
+  stop(): void;
+}
+
+class ServerSsh implements SshConnect {
+  start(): void {
+    console.log("Start Function here!!");
+  }
+  stop(): void {
+    console.log("Stop Function here!!");
+  }
+}
+
+const newConnect = new ServerSsh();
+newConnect.start();
+newConnect.stop();
+
+//Declaration Merging // ----------------------------------------------------------------------------- //
+
+//Original interface
+interface DecServerDetail {
+  readonly ip: string;
+  readonly port: number;
+}
+
+//Declaration merging (Interface extension)
+interface DecServerDetail {
+  details: string;
+  start(ip: string, port: number): void;
+  stop(ip: string, port: number): void;
+}
+const Server03: DecServerDetail = {
+  ip: "192.168.1.98",
+  port: 22,
+  details: "Something else",
+  start(ip, port) {
+    console.log(`${ip}:${port} Ssh started`);
+  },
+  stop(ip, port) {
+    console.log(`${ip}:${port} Ssh stopped`);
+  },
+};
+Server03.start(Server03.ip, Server03.port);
+Server03.stop(Server03.ip, Server03.port);
+
+//Generics // ----------------------------------------------------------------------------- //
+
+// Regular Func
+const printString = (x: string) => console.log(x);
+const printNumber = (x: number) => console.log(x);
+const printBoolean = (x: boolean) => console.log(x);
+printString("Hello");
+printNumber(3);
+printBoolean(true);
+
+//Generic Func
+function printInfo<T>(x: T): T {
+  return x;
+}
+const str = printInfo<string>("hello");
+const num = printInfo<number>(3);
+const bool = printInfo<boolean>(true);
+
+console.log(str + " " + num + " " + bool);
+
+function filterArray<T>(array: T[], condition: (item: T) => boolean): T[] {
+  return array.filter((item) => condition(item));
+}
+
+const NumberArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const evenNumbers = filterArray(NumberArray, (num) => num % 2 === 0);
+console.log(evenNumbers);
+
+interface Fruit {
+  name: string;
+  price: number;
+}
+
+const fruitArray: Fruit[] = [
+  { name: "Apple", price: 120 },
+  { name: "Banana", price: 200 },
+  { name: "Orange", price: 180 },
+];
+
+function filterArrays<T>(array: T[], condition: (item: T) => boolean): T[] {
+  return array.filter((item) => condition(item));
+}
+
+const lowPriceFruits = filterArrays<Fruit>(
+  fruitArray,
+  (fruit) => fruit.price < 190
+);
+console.log(lowPriceFruits);
+
+//Type Narrowing
+
+// * Type guards
+// * The instanceof operator
+// * Intersection types
+
+// Type guards
+type Mytype = string | number;
+
+function exampleFunction(value: Mytype): void {
+  if (typeof value === "string") {
+    console.log(value.toUpperCase());
+  } else {
+    console.log(value.toFixed(2));
+  }
+}
+exampleFunction("hello world");
+exampleFunction(10);
+
+// Instanceof operator
+class Cat {
+  cat(): void {
+    console.log("Meow");
+  }
+}
+class AnimeGirl {
+  animegirl(): void {
+    console.log("uWu");
+  }
+}
+
+function Sounds(sound: Cat | AnimeGirl) {
+  if (sound instanceof Cat) {
+    sound.cat();
+  }
+  if (sound instanceof AnimeGirl) {
+    sound.animegirl();
+  }
+}
+const MyCat = new Cat();
+Sounds(MyCat); // Meow
+const animegirl = new AnimeGirl();
+Sounds(animegirl); // uWu
+
+// Intersection types
+type Employe = {
+  id: number;
+  name: string;
+};
+
+type Company = {
+  department: string;
+  role: string;
+};
+
+type CompanyWithEmploye = Employe & Company;
+
+const Staff: CompanyWithEmploye = {
+  id: 1,
+  name: "Kayle",
+  department: "IT",
+  role: "staff",
+};
+
+console.log(
+  Staff.id + " " + Staff.name + " " + Staff.department + " " + Staff.role
+);
